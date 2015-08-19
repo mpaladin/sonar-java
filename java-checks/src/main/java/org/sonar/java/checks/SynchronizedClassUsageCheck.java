@@ -21,10 +21,12 @@ package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang.BooleanUtils;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
@@ -72,14 +74,7 @@ public class SynchronizedClassUsageCheck extends SubscriptionBaseVisitor {
   }
 
   private static boolean isDeprecatedType(Type symbolType) {
-    if (symbolType.isClass()) {
-      for (String deprecatedType : REPLACEMENTS.keySet()) {
-        if (symbolType.is(deprecatedType)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return symbolType.isClass() && Iterables.any(REPLACEMENTS.keySet(), SyntaxNodePredicates.typeIs(symbolType));
   }
 
   private static boolean isOverriding(MethodTree tree) {

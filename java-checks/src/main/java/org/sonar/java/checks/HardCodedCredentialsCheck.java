@@ -20,9 +20,12 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.model.LiteralUtils;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
@@ -38,6 +41,7 @@ import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
 import org.sonar.squidbridge.annotations.SqaleSubCharacteristic;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Rule(
@@ -91,21 +95,18 @@ public class HardCodedCredentialsCheck extends SubscriptionBaseVisitor {
     return argument.is(Tree.Kind.STRING_LITERAL) && PASSWORD_VARIABLE_PATTERN.matcher(LiteralUtils.trimQuotes(argument.value())).matches();
   }
 
+  private static final Set<Kind> LITERAL_KINDS = ImmutableSet.of(
+    Kind.INT_LITERAL,
+    Kind.LONG_LITERAL,
+    Kind.FLOAT_LITERAL,
+    Kind.DOUBLE_LITERAL,
+    Kind.BOOLEAN_LITERAL,
+    Kind.CHAR_LITERAL,
+    Kind.STRING_LITERAL,
+    Kind.NULL_LITERAL);
+
   private static boolean argumentsAreLiterals(List<ExpressionTree> arguments) {
-    for (ExpressionTree argument : arguments) {
-      if (!argument.is(
-        Kind.INT_LITERAL,
-        Kind.LONG_LITERAL,
-        Kind.FLOAT_LITERAL,
-        Kind.DOUBLE_LITERAL,
-        Kind.BOOLEAN_LITERAL,
-        Kind.CHAR_LITERAL,
-        Kind.STRING_LITERAL,
-        Kind.NULL_LITERAL)) {
-        return false;
-      }
-    }
-    return true;
+    return Iterables.all(arguments, SyntaxNodePredicates.kinds(LITERAL_KINDS));
   }
 
   private static boolean isStringLiteral(ExpressionTree initializer) {

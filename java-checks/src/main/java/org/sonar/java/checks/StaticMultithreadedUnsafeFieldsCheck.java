@@ -20,9 +20,12 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.model.ModifiersUtils;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.IdentifierTree;
@@ -34,6 +37,7 @@ import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
 import org.sonar.squidbridge.annotations.SqaleSubCharacteristic;
 
 import java.util.List;
+import java.util.Set;
 
 @Rule(
   key = "S2885",
@@ -45,7 +49,9 @@ import java.util.List;
 @SqaleConstantRemediation("15min")
 public class StaticMultithreadedUnsafeFieldsCheck extends SubscriptionBaseVisitor {
 
-  private static final String[] FORBIDDEN_TYPES = {"java.text.SimpleDateFormat", "java.util.Calendar"};
+  private static final Set<String> FORBIDDEN_TYPES = ImmutableSet.of(
+    "java.text.SimpleDateFormat",
+    "java.util.Calendar");
 
   @Override
   public List<Tree.Kind> nodesToVisit() {
@@ -62,12 +68,7 @@ public class StaticMultithreadedUnsafeFieldsCheck extends SubscriptionBaseVisito
   }
 
   private static boolean isForbiddenType(Type type) {
-    for (String name : FORBIDDEN_TYPES) {
-      if (type.isSubtypeOf(name)) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(FORBIDDEN_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
   }
 
 }

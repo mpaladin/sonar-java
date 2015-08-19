@@ -20,6 +20,8 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.resolve.JavaSymbol;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
@@ -71,12 +73,7 @@ public abstract class AbstractSerializableInnerClassRule extends SubscriptionBas
   }
 
   private static boolean directlyImplementsSerializable(Symbol.TypeSymbol symbol) {
-    for (org.sonar.plugins.java.api.semantic.Type type : symbol.interfaces()) {
-      if (type.is("java.io.Serializable")) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(symbol.interfaces(), SyntaxNodePredicates.isType("java.io.Serializable"));
   }
 
   protected abstract boolean isMatchingOuterClass(Type outerClass);

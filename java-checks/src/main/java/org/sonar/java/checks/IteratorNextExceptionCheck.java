@@ -20,13 +20,14 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
 import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
-import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
@@ -107,16 +108,7 @@ public class IteratorNextExceptionCheck extends SubscriptionBaseVisitor {
 
     public boolean throwsNoSuchElementException(MethodInvocationTree methodInvocationTree) {
       Symbol symbol = methodInvocationTree.symbol();
-      if (!symbol.isMethodSymbol()) {
-        return false;
-      }
-      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
-      for (Type thrownType : methodSymbol.thrownTypes()) {
-        if (thrownType.is("java.util.NoSuchElementException")) {
-          return true;
-        }
-      }
-      return false;
+      return symbol.isMethodSymbol() && Iterables.any(((Symbol.MethodSymbol) symbol).thrownTypes(), SyntaxNodePredicates.isType("java.util.NoSuchElementException"));
     }
 
   }

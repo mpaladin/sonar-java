@@ -19,10 +19,13 @@
  */
 package org.sonar.java.checks;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.plugins.java.api.tree.ClassTree;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.squidbridge.annotations.ActivatedByDefault;
@@ -61,11 +64,6 @@ public class EmptyClassCheck extends SubscriptionBaseVisitor {
   }
 
   private static boolean isEmpty(ClassTree tree) {
-    for (Tree member : tree.members()) {
-      if (!member.is(Tree.Kind.EMPTY_STATEMENT)) {
-        return false;
-      }
-    }
-    return true;
+    return !Iterables.any(tree.members(), Predicates.not(SyntaxNodePredicates.kind(Tree.Kind.EMPTY_STATEMENT)));
   }
 }

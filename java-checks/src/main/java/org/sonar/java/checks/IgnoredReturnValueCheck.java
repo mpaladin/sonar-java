@@ -20,9 +20,11 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.ExpressionStatementTree;
@@ -75,12 +77,7 @@ public class IgnoredReturnValueCheck extends SubscriptionBaseVisitor {
 
   private static boolean isCheckedType(MethodInvocationTree mit) {
     Symbol owner = mit.symbol().owner();
-    for (String type : CHECKED_TYPES) {
-      if (owner.type().is(type)) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(CHECKED_TYPES, SyntaxNodePredicates.typeIs(owner.type()));
   }
 
   private static boolean returnsVoid(Type methodType) {

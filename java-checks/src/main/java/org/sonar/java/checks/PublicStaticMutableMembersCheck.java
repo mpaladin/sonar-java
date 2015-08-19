@@ -151,7 +151,7 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
 
   static boolean isMutable(@Nullable ExpressionTree initializer, Type type) {
     if (initializer == null) {
-      return Iterables.any(ALWAYS_MUTABLE_TYPES, SyntaxNodePredicates.isSubtypeOf(type));
+      return Iterables.any(ALWAYS_MUTABLE_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
     }
     ExpressionTree expression = ExpressionsHelper.skipParentheses(initializer);
     if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
@@ -173,12 +173,7 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
   }
 
   private static boolean isAcceptedType(Type type, Set<String> accepted) {
-    for (String acceptedType : accepted) {
-      if (type.isSubtypeOf(acceptedType)) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(accepted, SyntaxNodePredicates.typeIsSubtypeOf(type));
   }
 
   static boolean isPublicStatic(Symbol symbol) {
@@ -186,6 +181,6 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
   }
 
   static boolean isForbiddenType(final Type type) {
-    return type.isArray() || Iterables.any(MUTABLE_TYPES, SyntaxNodePredicates.isSubtypeOf(type));
+    return type.isArray() || Iterables.any(MUTABLE_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
   }
 }

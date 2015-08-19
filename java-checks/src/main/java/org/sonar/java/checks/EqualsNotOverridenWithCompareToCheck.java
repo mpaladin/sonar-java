@@ -20,9 +20,11 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.ClassTree;
@@ -85,12 +87,7 @@ public class EqualsNotOverridenWithCompareToCheck extends SubscriptionBaseVisito
   }
 
   private static boolean isComparable(ClassTree tree) {
-    for (Type type : tree.symbol().interfaces()) {
-      if (type.is("java.lang.Comparable")) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(tree.symbol().interfaces(), SyntaxNodePredicates.isType("java.lang.Comparable"));
   }
 
   private static boolean returnsInt(MethodTree tree) {

@@ -23,6 +23,8 @@ import com.google.common.base.Predicate;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.Tree;
 
+import java.util.Set;
+
 public class SyntaxNodePredicates {
 
   private SyntaxNodePredicates() {
@@ -38,11 +40,38 @@ public class SyntaxNodePredicates {
     };
   }
 
-  public static Predicate<String> isSubtypeOf(final Type type) {
+  public static Predicate<Tree> kinds(final Set<Tree.Kind> kinds) {
+    return new Predicate<Tree>() {
+      @Override
+      public boolean apply(Tree input) {
+        return kinds.contains(input.kind());
+      }
+    };
+  }
+
+  public static Predicate<String> typeIs(final Type type) {
+    return new Predicate<String>() {
+      @Override
+      public boolean apply(String input) {
+        return type.is(input);
+      }
+    };
+  }
+
+  public static Predicate<String> typeIsSubtypeOf(final Type type) {
     return new Predicate<String>() {
       @Override
       public boolean apply(String input) {
         return type.isSubtypeOf(input);
+      }
+    };
+  }
+
+  public static Predicate<Type> isType(final String type) {
+    return new Predicate<Type>() {
+      @Override
+      public boolean apply(Type input) {
+        return input.is(type);
       }
     };
   }

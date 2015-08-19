@@ -20,9 +20,11 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.SyntaxNodePredicates;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.SynchronizedStatementTree;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -69,12 +71,7 @@ public class SynchronizationOnStringOrBoxedCheck extends SubscriptionBaseVisitor
   }
 
   private static boolean isForbiddenType(Type expressionType) {
-    for (String forbiddenType : FORBIDDEN_TYPES) {
-      if (expressionType.is(forbiddenType)) {
-        return true;
-      }
-    }
-    return false;
+    return Iterables.any(FORBIDDEN_TYPES, SyntaxNodePredicates.typeIs(expressionType));
   }
 
 }
