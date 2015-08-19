@@ -22,9 +22,9 @@ package org.sonar.java.checks;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.semantic.Symbol;
@@ -54,11 +54,11 @@ public class StaticMethodCheck extends BaseTreeVisitor implements JavaFileScanne
   private static final String JAVA_IO_SERIALIZABLE = "java.io.Serializable";
   private static final MethodInvocationMatcherCollection EXCLUDED_SERIALIZABLE_METHODS = MethodInvocationMatcherCollection.create(
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf(JAVA_IO_SERIALIZABLE)).name("readObject").addParameter(TypeCriteria.subtypeOf("java.io.ObjectInputStream")),
+      .typeDefinition(TypePredicates.isSubtypeOf(JAVA_IO_SERIALIZABLE)).name("readObject").addParameter(TypePredicates.isSubtypeOf("java.io.ObjectInputStream")),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf(JAVA_IO_SERIALIZABLE)).name("writeObject").addParameter(TypeCriteria.subtypeOf("java.io.ObjectOutputStream")),
+      .typeDefinition(TypePredicates.isSubtypeOf(JAVA_IO_SERIALIZABLE)).name("writeObject").addParameter(TypePredicates.isSubtypeOf("java.io.ObjectOutputStream")),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf(JAVA_IO_SERIALIZABLE)).name("readObjectNoData")
+      .typeDefinition(TypePredicates.isSubtypeOf(JAVA_IO_SERIALIZABLE)).name("readObjectNoData")
   );
 
   private JavaFileScannerContext context;

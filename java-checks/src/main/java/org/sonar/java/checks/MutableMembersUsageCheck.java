@@ -24,7 +24,7 @@ import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.semantic.Symbol;
@@ -153,7 +153,7 @@ public class MutableMembersUsageCheck extends BaseTreeVisitor implements JavaFil
   }
 
   private static boolean isNotImmutable(Type type) {
-    return !Iterables.any(IMMUTABLE_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
+    return !Iterables.any(IMMUTABLE_TYPES, TypePredicates.typeIsSubtypeOf(type));
   }
 
 }

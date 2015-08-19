@@ -20,7 +20,10 @@
 package org.sonar.java.checks.methods;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
 import org.sonar.plugins.java.api.semantic.Type;
@@ -36,10 +39,10 @@ import java.util.List;
 
 public class MethodMatcher {
 
-  private TypeCriteria typeDefinition;
-  private TypeCriteria callSite;
-  private NameCriteria methodName;
-  private List<TypeCriteria> parameterTypes;
+  private Predicate<Type> typeDefinition;
+  private Predicate<Type> callSite;
+  private Predicate<String> methodName;
+  private List<Predicate<Type>> parameterTypes;
 
   MethodMatcher() {
     parameterTypes = Lists.newArrayList();
@@ -50,17 +53,17 @@ public class MethodMatcher {
   }
 
   public MethodMatcher name(String methodName) {
-    this.methodName = NameCriteria.is(methodName);
+    this.methodName = Predicates.equalTo(methodName);
     return this;
   }
 
-  public MethodMatcher name(NameCriteria methodName) {
+  public MethodMatcher name(Predicate<String> methodName) {
     Preconditions.checkState(this.methodName == null);
     this.methodName = methodName;
     return this;
   }
 
-  public MethodMatcher typeDefinition(TypeCriteria typeDefinition) {
+  public MethodMatcher typeDefinition(Predicate<Type> typeDefinition) {
     Preconditions.checkState(this.typeDefinition == null);
     this.typeDefinition = typeDefinition;
     return this;
@@ -68,22 +71,22 @@ public class MethodMatcher {
 
   public MethodMatcher typeDefinition(String fullyQualifiedTypeName) {
     Preconditions.checkState(typeDefinition == null);
-    this.typeDefinition = TypeCriteria.is(fullyQualifiedTypeName);
+    this.typeDefinition = TypePredicates.isType(fullyQualifiedTypeName);
     return this;
   }
 
-  public MethodMatcher callSite(TypeCriteria callSite) {
+  public MethodMatcher callSite(Predicate<Type> callSite) {
     this.callSite = callSite;
     return this;
   }
 
   public MethodMatcher addParameter(String fullyQualifiedTypeParameterName) {
     Preconditions.checkState(parameterTypes != null);
-    parameterTypes.add(TypeCriteria.is(fullyQualifiedTypeParameterName));
+    parameterTypes.add(TypePredicates.isType(fullyQualifiedTypeParameterName));
     return this;
   }
 
-  public MethodMatcher addParameter(TypeCriteria parameterTypeCriteria) {
+  public MethodMatcher addParameter(Predicate<Type> parameterTypeCriteria) {
     Preconditions.checkState(parameterTypes != null);
     parameterTypes.add(parameterTypeCriteria);
     return this;
@@ -131,16 +134,16 @@ public class MethodMatcher {
   private boolean isSearchedMethod(MethodSymbol symbol, Type callSiteType) {
     boolean result = nameAcceptable(symbol) && parametersAcceptable(symbol);
     if (typeDefinition != null) {
-      result &= typeDefinition.matches(symbol.owner().type());
+      result &= typeDefinition.apply(symbol.owner().type());
     }
     if (callSite != null) {
-      result &= callSiteType != null && callSite.matches(callSiteType);
+      result &= callSiteType != null && callSite.apply(callSiteType);
     }
     return result;
   }
 
   private boolean nameAcceptable(MethodSymbol symbol) {
-    return methodName != null && methodName.matches(symbol.name());
+    return methodName != null && methodName.apply(symbol.name());
   }
 
   private boolean parametersAcceptable(MethodSymbol methodSymbol) {
@@ -148,11 +151,11 @@ public class MethodMatcher {
       return true;
     }
     List<Type> parametersTypes = methodSymbol.parameterTypes();
-    List<TypeCriteria> arguments = parameterTypes;
+    List<Predicate<Type>> arguments = parameterTypes;
     if (parametersTypes.size() == arguments.size()) {
       int i = 0;
       for (Type parameterType : parametersTypes) {
-        if (!arguments.get(i).matches(parameterType)) {
+        if (!arguments.get(i).apply(parameterType)) {
           return false;
         }
         i++;

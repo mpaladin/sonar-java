@@ -20,32 +20,25 @@
 package org.sonar.java.checks.helpers;
 
 import com.google.common.base.Predicate;
-import org.sonar.plugins.java.api.tree.Tree;
+import com.google.common.base.Predicates;
+import org.junit.Test;
 
-import java.util.Set;
+import static org.fest.assertions.Assertions.assertThat;
 
-public class SyntaxNodePredicates {
+public class NamePredicatesTest {
 
-  private SyntaxNodePredicates() {
-    // Useful predicates to be used with syntax nodes
+  @Test
+  public void should_match_exact_name() {
+    Predicate<String> nc = Predicates.equalTo("equal");
+    assertThat(nc.apply("foo")).isFalse();
+    assertThat(nc.apply("equal")).isTrue();
   }
 
-  public static Predicate<Tree> kind(final Tree.Kind syntaxNodeKind) {
-    return new Predicate<Tree>() {
-      @Override
-      public boolean apply(Tree syntaxNode) {
-        return syntaxNode.is(syntaxNodeKind);
-      }
-    };
+  @Test
+  public void should_match_prefix() {
+    Predicate<String> nc = NamePredicates.startsWith("get");
+    assertThat(nc.apply("equal")).isFalse();
+    assertThat(nc.apply("get")).isTrue();
+    assertThat(nc.apply("getObject")).isTrue();
   }
-
-  public static Predicate<Tree> kinds(final Set<Tree.Kind> kinds) {
-    return new Predicate<Tree>() {
-      @Override
-      public boolean apply(Tree input) {
-        return kinds.contains(input.kind());
-      }
-    };
-  }
-
 }

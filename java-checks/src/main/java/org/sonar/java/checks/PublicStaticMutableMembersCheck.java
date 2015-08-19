@@ -28,11 +28,10 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.helpers.ExpressionsHelper;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
@@ -75,15 +74,15 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
   private static final String DECORATE = "decorate";
   // java.util and apache commons
   private static final MethodInvocationMatcherCollection UNMODIFIABLE_METHOD_CALLS = MethodInvocationMatcherCollection.create()
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.anyType()).name(NameCriteria.startsWith("unmodifiable")).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.anyType()).name(NamePredicates.startsWith("unmodifiable")).withNoParameterConstraint())
       // apache commons 3.X
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections.map.UnmodifiableMap")).name(DECORATE).withNoParameterConstraint())
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections.set.UnmodifiableSet")).name(DECORATE).withNoParameterConstraint())
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections.list.UnmodifiableList")).name(DECORATE).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections.map.UnmodifiableMap")).name(DECORATE).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections.set.UnmodifiableSet")).name(DECORATE).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections.list.UnmodifiableList")).name(DECORATE).withNoParameterConstraint())
       // apache commons 4.X
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections4.map.UnmodifiableMap")).name(DECORATE).withNoParameterConstraint())
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections4.set.UnmodifiableSet")).name(DECORATE).withNoParameterConstraint())
-    .add(MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.apache.commons.collections4.list.UnmodifiableList")).name(DECORATE).withNoParameterConstraint());
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections4.map.UnmodifiableMap")).name(DECORATE).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections4.set.UnmodifiableSet")).name(DECORATE).withNoParameterConstraint())
+    .add(MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.apache.commons.collections4.list.UnmodifiableList")).name(DECORATE).withNoParameterConstraint());
   private static final MethodMatcher ARRAYS_AS_LIST = MethodMatcher.create()
     .typeDefinition("java.util.Arrays").name("asList").withNoParameterConstraint();
 
@@ -151,7 +150,7 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
 
   static boolean isMutable(@Nullable ExpressionTree initializer, Type type) {
     if (initializer == null) {
-      return Iterables.any(ALWAYS_MUTABLE_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
+      return Iterables.any(ALWAYS_MUTABLE_TYPES, TypePredicates.typeIsSubtypeOf(type));
     }
     ExpressionTree expression = ExpressionsHelper.skipParentheses(initializer);
     if (expression.is(Tree.Kind.METHOD_INVOCATION)) {
@@ -173,7 +172,7 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
   }
 
   private static boolean isAcceptedType(Type type, Set<String> accepted) {
-    return Iterables.any(accepted, SyntaxNodePredicates.typeIsSubtypeOf(type));
+    return Iterables.any(accepted, TypePredicates.typeIsSubtypeOf(type));
   }
 
   static boolean isPublicStatic(Symbol symbol) {
@@ -181,6 +180,6 @@ public class PublicStaticMutableMembersCheck extends SubscriptionBaseVisitor {
   }
 
   static boolean isForbiddenType(final Type type) {
-    return type.isArray() || Iterables.any(MUTABLE_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
+    return type.isArray() || Iterables.any(MUTABLE_TYPES, TypePredicates.typeIsSubtypeOf(type));
   }
 }

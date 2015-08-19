@@ -26,7 +26,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
@@ -74,7 +74,7 @@ public class SynchronizedClassUsageCheck extends SubscriptionBaseVisitor {
   }
 
   private static boolean isDeprecatedType(Type symbolType) {
-    return symbolType.isClass() && Iterables.any(REPLACEMENTS.keySet(), SyntaxNodePredicates.typeIs(symbolType));
+    return symbolType.isClass() && Iterables.any(REPLACEMENTS.keySet(), TypePredicates.typeIs(symbolType));
   }
 
   private static boolean isOverriding(MethodTree tree) {

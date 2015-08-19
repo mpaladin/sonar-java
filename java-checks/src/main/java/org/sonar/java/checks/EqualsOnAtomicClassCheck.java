@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
 import org.sonar.squidbridge.annotations.ActivatedByDefault;
 import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
@@ -53,7 +53,7 @@ public class EqualsOnAtomicClassCheck extends AbstractMethodDetection {
 
   private static MethodMatcher equalsInvocationMatcher(String fullyQualifiedName) {
     return MethodMatcher.create()
-      .callSite(TypeCriteria.is(fullyQualifiedName))
+      .callSite(TypePredicates.isType(fullyQualifiedName))
       .name("equals")
       .addParameter("java.lang.Object");
   }

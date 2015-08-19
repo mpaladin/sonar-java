@@ -24,9 +24,9 @@ import com.google.common.collect.ImmutableMap;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.methods.MethodMatcher;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
-import org.sonar.java.checks.methods.TypeCriteria;
+import org.sonar.java.checks.methods.MethodMatcher;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
@@ -204,7 +204,7 @@ public class ImmediateReverseBoxingCheck extends SubscriptionBaseVisitor {
     for (String primitiveType : PRIMITIVE_TYPES_BY_WRAPPER.values()) {
       matchers.add(
         MethodMatcher.create()
-          .callSite("boolean".equals(primitiveType) ? TypeCriteria.is("java.lang.Boolean") : TypeCriteria.subtypeOf("java.lang.Number"))
+          .callSite("boolean".equals(primitiveType) ? TypePredicates.isType("java.lang.Boolean") : TypePredicates.isSubtypeOf("java.lang.Number"))
           .name(primitiveType + "Value"));
     }
     return matchers;

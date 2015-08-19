@@ -17,26 +17,27 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.java.checks.methods;
+package org.sonar.java.checks.helpers;
 
-import org.junit.Test;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
-import static org.fest.assertions.Assertions.assertThat;
+public class NamePredicates {
 
-public class NameCriteriaTest {
-
-  @Test
-  public void should_match_exact_name() {
-    NameCriteria nc = NameCriteria.is("equal");
-    assertThat(nc.matches("foo")).isFalse();
-    assertThat(nc.matches("equal")).isTrue();
+  private NamePredicates() {
+    // Useful predicates to be used with strings
   }
 
-  @Test
-  public void should_match_prefix() {
-    NameCriteria nc = NameCriteria.startsWith("get");
-    assertThat(nc.matches("equal")).isFalse();
-    assertThat(nc.matches("get")).isTrue();
-    assertThat(nc.matches("getObject")).isTrue();
+  public static Predicate<String> any() {
+    return Predicates.alwaysTrue();
+  }
+
+  public static Predicate<String> startsWith(final String prefix) {
+    return new Predicate<String>() {
+      @Override
+      public boolean apply(String input) {
+        return input.startsWith(prefix);
+      }
+    };
   }
 }

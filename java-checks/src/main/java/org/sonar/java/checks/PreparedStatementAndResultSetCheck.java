@@ -27,10 +27,10 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.helpers.ExpressionsHelper;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.java.model.LiteralUtils;
 import org.sonar.java.syntaxtoken.FirstSyntaxTokenFinder;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
@@ -75,9 +75,9 @@ public class PreparedStatementAndResultSetCheck extends AbstractMethodDetection 
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
     return ImmutableList.of(
-      MethodMatcher.create().typeDefinition("java.sql.PreparedStatement").name(NameCriteria.startsWith("set")).addParameter(INT).addParameter(TypeCriteria.anyType()),
-      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NameCriteria.startsWith("get")).addParameter(INT),
-      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NameCriteria.startsWith("get")).addParameter(INT).addParameter(TypeCriteria.anyType()));
+      MethodMatcher.create().typeDefinition("java.sql.PreparedStatement").name(NamePredicates.startsWith("set")).addParameter(INT).addParameter(TypePredicates.anyType()),
+      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NamePredicates.startsWith("get")).addParameter(INT),
+      MethodMatcher.create().typeDefinition(JAVA_SQL_RESULTSET).name(NamePredicates.startsWith("get")).addParameter(INT).addParameter(TypePredicates.anyType()));
   }
 
   @Override

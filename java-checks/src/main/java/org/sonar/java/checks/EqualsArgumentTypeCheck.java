@@ -24,8 +24,8 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.helpers.ExpressionsHelper;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.BinaryExpressionTree;
@@ -57,7 +57,7 @@ public class EqualsArgumentTypeCheck extends SubscriptionBaseVisitor {
 
   private static final MethodMatcher EQUALS_MATCHER = MethodMatcher.create()
     .name("equals")
-    .addParameter(TypeCriteria.anyType());
+    .addParameter(TypePredicates.anyType());
 
   private static final MethodMatcher GETCLASS_MATCHER = MethodMatcher.create()
     .name("getClass");

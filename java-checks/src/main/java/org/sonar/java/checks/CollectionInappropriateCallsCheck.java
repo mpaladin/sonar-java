@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.java.resolve.JavaType;
 import org.sonar.java.resolve.JavaType.ParametrizedTypeJavaType;
 import org.sonar.java.resolve.JavaType.TypeVariableJavaType;
@@ -38,7 +38,6 @@ import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
 import org.sonar.squidbridge.annotations.SqaleSubCharacteristic;
 
 import javax.annotation.Nullable;
-
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class CollectionInappropriateCallsCheck extends AbstractMethodDetection {
 
   private static MethodMatcher collectionMethodInvocation(String methodName) {
     return MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.util.Collection"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.util.Collection"))
       .name(methodName)
       .addParameter("java.lang.Object");
   }

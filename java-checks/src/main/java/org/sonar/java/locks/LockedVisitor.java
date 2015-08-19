@@ -20,9 +20,9 @@
 package org.sonar.java.locks;
 
 import com.google.common.collect.Lists;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.java.symexecengine.ExecutionState;
 import org.sonar.java.symexecengine.State;
 import org.sonar.java.symexecengine.SymbolicExecutionCheck;
@@ -44,18 +44,18 @@ public class LockedVisitor extends SymbolicExecutionCheck {
   private static final String JAVA_LOCK = "java.util.concurrent.locks.Lock";
 
   private static final MethodInvocationMatcherCollection LOCK_INVOCATIONS = lockMethodInvocationMatcher();
-  private static final MethodMatcher UNLOCK_INVOCATION = MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(JAVA_LOCK)).name("unlock");
+  private static final MethodMatcher UNLOCK_INVOCATION = MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf(JAVA_LOCK)).name("unlock");
 
   private static MethodInvocationMatcherCollection lockMethodInvocationMatcher() {
     return MethodInvocationMatcherCollection.create(
       MethodMatcher.create()
-        .typeDefinition(TypeCriteria.subtypeOf(JAVA_LOCK))
+        .typeDefinition(TypePredicates.isSubtypeOf(JAVA_LOCK))
         .name("lock"),
       MethodMatcher.create()
-        .typeDefinition(TypeCriteria.subtypeOf(JAVA_LOCK))
+        .typeDefinition(TypePredicates.isSubtypeOf(JAVA_LOCK))
         .name("lockInterruptibly"),
       MethodMatcher.create()
-        .typeDefinition(TypeCriteria.subtypeOf(JAVA_LOCK))
+        .typeDefinition(TypePredicates.isSubtypeOf(JAVA_LOCK))
         .name("tryLock")
         .withNoParameterConstraint());
   }

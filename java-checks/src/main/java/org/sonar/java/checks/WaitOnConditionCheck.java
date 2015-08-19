@@ -19,13 +19,15 @@
  */
 package org.sonar.java.checks;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
+import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
 import org.sonar.squidbridge.annotations.ActivatedByDefault;
 import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
@@ -45,7 +47,7 @@ public class WaitOnConditionCheck extends AbstractMethodDetection {
 
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
-    TypeCriteria conditionSubType = TypeCriteria.subtypeOf("java.util.concurrent.locks.Condition");
+    Predicate<Type> conditionSubType = TypePredicates.isSubtypeOf("java.util.concurrent.locks.Condition");
     return ImmutableList.<MethodMatcher>builder()
         .add(MethodMatcher.create().callSite(conditionSubType).name("wait"))
         .add(MethodMatcher.create().callSite(conditionSubType).name("wait").addParameter("long"))

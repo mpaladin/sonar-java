@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.sonar.java.ast.JavaAstScanner;
 import org.sonar.java.checks.SubscriptionBaseVisitor;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.model.JavaTree;
 import org.sonar.java.model.VisitorsBridge;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
@@ -62,7 +63,7 @@ public class MethodMatcherTest {
 
   @Test
   public void detected() {
-    MethodMatcher objectToString = MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("java.lang.Object")).name("toString");
+    MethodMatcher objectToString = MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("java.lang.Object")).name("toString");
     MethodMatcher integerToString = MethodMatcher.create().typeDefinition("java.lang.Integer").name("toString");
 
     Map<MethodMatcher, List<Integer>> matches = new HashMap<>();

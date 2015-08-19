@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.CatchTree;
@@ -54,7 +54,7 @@ import java.util.List;
 public class ServletMethodsExceptionsThrownCheck extends SubscriptionBaseVisitor {
 
   private static final MethodMatcher IS_SERVLET_DO_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.subtypeOf("javax.servlet.http.HttpServlet")).name(NameCriteria.startsWith("do")).withNoParameterConstraint();
+    .typeDefinition(TypePredicates.isSubtypeOf("javax.servlet.http.HttpServlet")).name(NamePredicates.startsWith("do")).withNoParameterConstraint();
 
   private final Deque<Boolean> shouldCheck = new ArrayDeque<>();
   private final Deque<List<Type>> tryCatches = new ArrayDeque<>();

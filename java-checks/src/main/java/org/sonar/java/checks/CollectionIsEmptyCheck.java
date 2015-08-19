@@ -22,8 +22,8 @@ package org.sonar.java.checks;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
@@ -121,7 +121,7 @@ public class CollectionIsEmptyCheck extends BaseTreeVisitor implements JavaFileS
   }
 
   private static MethodMatcher getSizeMethodInvocationMatcher() {
-    return MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(JAVA_UTIL_COLLECTION)).name("size").withNoParameterConstraint();
+    return MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf(JAVA_UTIL_COLLECTION)).name("size").withNoParameterConstraint();
   }
 
 }

@@ -24,8 +24,8 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.helpers.ExpressionsHelper;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.BinaryExpressionTree;
 import org.sonar.plugins.java.api.tree.ExpressionStatementTree;
@@ -51,10 +51,10 @@ public class UnusedReturnedDataCheck extends SubscriptionBaseVisitor {
 
   private static final List<MethodMatcher> CHECKED_METHODS = ImmutableList.of(
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.io.BufferedReader"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.io.BufferedReader"))
       .name("readLine"),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.io.Reader"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.io.Reader"))
       .name("read"));
 
   @Override

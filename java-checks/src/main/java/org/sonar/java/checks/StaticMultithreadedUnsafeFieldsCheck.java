@@ -25,7 +25,7 @@ import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.model.ModifiersUtils;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.IdentifierTree;
@@ -68,7 +68,7 @@ public class StaticMultithreadedUnsafeFieldsCheck extends SubscriptionBaseVisito
   }
 
   private static boolean isForbiddenType(Type type) {
-    return Iterables.any(FORBIDDEN_TYPES, SyntaxNodePredicates.typeIsSubtypeOf(type));
+    return Iterables.any(FORBIDDEN_TYPES, TypePredicates.typeIsSubtypeOf(type));
   }
 
 }

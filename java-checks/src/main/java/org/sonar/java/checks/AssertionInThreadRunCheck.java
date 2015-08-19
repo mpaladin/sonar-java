@@ -24,7 +24,7 @@ import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.BlockTree;
@@ -75,7 +75,7 @@ public class AssertionInThreadRunCheck extends SubscriptionBaseVisitor {
     @Override
     public void visitMethodInvocation(MethodInvocationTree tree) {
       Type type = tree.symbol().owner().type();
-      if (Iterables.any(CHECKED_TYPES, SyntaxNodePredicates.typeIs(type))) {
+      if (Iterables.any(CHECKED_TYPES, TypePredicates.typeIs(type))) {
         addIssue(tree, "Remove this assertion.");
       }
       super.visitMethodInvocation(tree);

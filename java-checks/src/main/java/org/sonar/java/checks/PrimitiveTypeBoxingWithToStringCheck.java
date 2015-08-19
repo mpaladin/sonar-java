@@ -22,9 +22,9 @@ package org.sonar.java.checks;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.java.model.LiteralUtils;
 import org.sonar.java.resolve.JavaType;
 import org.sonar.plugins.java.api.JavaFileScanner;
@@ -76,7 +76,7 @@ public class PrimitiveTypeBoxingWithToStringCheck extends BaseTreeVisitor implem
     MethodInvocationMatcherCollection matchers = MethodInvocationMatcherCollection.create();
     for (String fullyQualifiedName : typeFullyQualifiedNames) {
       matchers.add(MethodMatcher.create()
-        .typeDefinition(TypeCriteria.subtypeOf(fullyQualifiedName))
+        .typeDefinition(TypePredicates.isSubtypeOf(fullyQualifiedName))
         .name("toString"));
     }
     return matchers;

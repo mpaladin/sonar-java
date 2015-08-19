@@ -23,9 +23,9 @@ import com.google.common.collect.Lists;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.NamePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -48,9 +48,9 @@ public class BooleanLiteralInAssertionsCheck extends AbstractMethodDetection {
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
     return Lists.newArrayList(
-      MethodMatcher.create().typeDefinition("org.junit.Assert").name(NameCriteria.startsWith(ASSERT)).withNoParameterConstraint(),
-      MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NameCriteria.startsWith(ASSERT)).withNoParameterConstraint(),
-      MethodMatcher.create().typeDefinition("junit.framework.TestCase").name(NameCriteria.startsWith(ASSERT)).withNoParameterConstraint(),
+      MethodMatcher.create().typeDefinition("org.junit.Assert").name(NamePredicates.startsWith(ASSERT)).withNoParameterConstraint(),
+      MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NamePredicates.startsWith(ASSERT)).withNoParameterConstraint(),
+      MethodMatcher.create().typeDefinition("junit.framework.TestCase").name(NamePredicates.startsWith(ASSERT)).withNoParameterConstraint(),
       MethodMatcher.create().typeDefinition("org.fest.assertions.Assertions").name("assertThat").addParameter("boolean")
       );
   }

@@ -24,8 +24,8 @@ import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
@@ -40,7 +40,6 @@ import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
 import org.sonar.squidbridge.annotations.SqaleSubCharacteristic;
 
 import javax.annotation.CheckForNull;
-
 import java.util.List;
 
 @Rule(
@@ -54,12 +53,12 @@ import java.util.List;
 public class KeySetInsteadOfEntrySetCheck extends SubscriptionBaseVisitor {
 
   private static final MethodMatcher MAP_GET_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.subtypeOf("java.util.Map"))
+    .typeDefinition(TypePredicates.isSubtypeOf("java.util.Map"))
     .name("get")
     .addParameter("java.lang.Object");
 
   private static final MethodMatcher MAP_KEYSET_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.subtypeOf("java.util.Map"))
+    .typeDefinition(TypePredicates.isSubtypeOf("java.util.Map"))
     .name("keySet");
 
   @Override

@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.SymbolMetadata;
 import org.sonar.plugins.java.api.semantic.Type;
@@ -55,7 +55,7 @@ public class ReflectionOnNonRuntimeAnnotationCheck extends AbstractMethodDetecti
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
     return ImmutableList.of(MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.lang.reflect.AnnotatedElement"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.lang.reflect.AnnotatedElement"))
       .name("isAnnotationPresent").withNoParameterConstraint());
   }
 

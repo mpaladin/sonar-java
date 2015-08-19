@@ -19,13 +19,13 @@
  */
 package org.sonar.java.checks;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
 import org.sonar.squidbridge.annotations.ActivatedByDefault;
@@ -44,7 +44,12 @@ import java.util.List;
 @SqaleConstantRemediation("5min")
 public class ArrayHashCodeAndToStringCheck extends AbstractMethodDetection {
 
-  private static final TypeCriteria IS_ARRAY = new IsArrayCriteria();
+  private static final Predicate<Type> IS_ARRAY = new Predicate<Type>() {
+    @Override
+    public boolean apply(Type input) {
+      return input.isArray();
+    }
+  };
 
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
@@ -63,15 +68,6 @@ public class ArrayHashCodeAndToStringCheck extends AbstractMethodDetection {
   protected void onMethodInvocationFound(MethodInvocationTree mit) {
     String methodName = mit.symbol().name();
     addIssue(mit, "Use \"Arrays." + methodName + "(array)\" instead.");
-  }
-
-  private static class IsArrayCriteria extends TypeCriteria {
-
-    @Override
-    public boolean matches(Type type) {
-      return type.isArray();
-    }
-
   }
 
 }

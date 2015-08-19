@@ -24,9 +24,8 @@ import com.google.common.collect.Iterables;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.helpers.SyntaxNodePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
@@ -54,7 +53,7 @@ public class IteratorNextExceptionCheck extends SubscriptionBaseVisitor {
 
   private static final MethodMatcher NEXT_INVOCATION_MATCHER =
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.util.Iterator"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.util.Iterator"))
       .name("next");
 
   @Override
@@ -108,7 +107,7 @@ public class IteratorNextExceptionCheck extends SubscriptionBaseVisitor {
 
     public boolean throwsNoSuchElementException(MethodInvocationTree methodInvocationTree) {
       Symbol symbol = methodInvocationTree.symbol();
-      return symbol.isMethodSymbol() && Iterables.any(((Symbol.MethodSymbol) symbol).thrownTypes(), SyntaxNodePredicates.isType("java.util.NoSuchElementException"));
+      return symbol.isMethodSymbol() && Iterables.any(((Symbol.MethodSymbol) symbol).thrownTypes(), TypePredicates.isType("java.util.NoSuchElementException"));
     }
 
   }

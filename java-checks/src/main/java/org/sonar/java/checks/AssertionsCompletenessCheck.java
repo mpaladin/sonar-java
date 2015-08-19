@@ -20,13 +20,15 @@
 package org.sonar.java.checks;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-import org.sonar.java.checks.methods.MethodMatcher;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
+import org.sonar.java.checks.methods.MethodMatcher;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
@@ -64,19 +66,19 @@ public class AssertionsCompletenessCheck extends BaseTreeVisitor implements Java
   );
 
   private static MethodMatcher assertThatOnType(String type) {
-    return MethodMatcher.create().typeDefinition(type).name("assertThat").addParameter(TypeCriteria.anyType());
+    return MethodMatcher.create().typeDefinition(type).name("assertThat").addParameter(TypePredicates.anyType());
   }
 
   private static final MethodInvocationMatcherCollection FEST_LIKE_EXCLUSIONS = MethodInvocationMatcherCollection.create(
-    methodWithName(NameCriteria.startsWith("as")),
-    methodWithName(NameCriteria.startsWith("using")),
-    methodWithName(NameCriteria.startsWith("with")),
-    methodWithName(NameCriteria.is("describedAs")),
-    methodWithName(NameCriteria.is("overridingErrorMessage"))
+    methodWithName(NamePredicates.startsWith("as")),
+    methodWithName(NamePredicates.startsWith("using")),
+    methodWithName(NamePredicates.startsWith("with")),
+    methodWithName(Predicates.equalTo("describedAs")),
+    methodWithName(Predicates.equalTo("overridingErrorMessage"))
   );
 
-  private static MethodMatcher methodWithName(NameCriteria nameCriteria) {
-    return MethodMatcher.create().typeDefinition(TypeCriteria.anyType()).name(nameCriteria).withNoParameterConstraint();
+  private static MethodMatcher methodWithName(Predicate<String> nameCriteria) {
+    return MethodMatcher.create().typeDefinition(TypePredicates.anyType()).name(nameCriteria).withNoParameterConstraint();
   }
 
   private Boolean chainedToAnyMethodButFestExclusions = null;

@@ -24,10 +24,10 @@ import com.google.common.collect.Sets;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.AbstractMethodDetection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.MethodInvocationTree;
@@ -55,12 +55,12 @@ public class AssertionsWithoutMessageCheck extends AbstractMethodDetection {
   @Override
   protected List<MethodMatcher> getMethodInvocationMatchers() {
     return Lists.newArrayList(
-        MethodMatcher.create().typeDefinition("org.junit.Assert").name(NameCriteria.startsWith("assert")).withNoParameterConstraint(),
+        MethodMatcher.create().typeDefinition("org.junit.Assert").name(NamePredicates.startsWith("assert")).withNoParameterConstraint(),
         MethodMatcher.create().typeDefinition("org.junit.Assert").name("fail").withNoParameterConstraint(),
-        MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NameCriteria.startsWith("assert")).withNoParameterConstraint(),
-        MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
-        MethodMatcher.create().typeDefinition("org.fest.assertions.Fail").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
-        MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf(GENERIC_ASSERT)).name(NameCriteria.any()).withNoParameterConstraint()
+        MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NamePredicates.startsWith("assert")).withNoParameterConstraint(),
+        MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
+        MethodMatcher.create().typeDefinition("org.fest.assertions.Fail").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
+        MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf(GENERIC_ASSERT)).name(NamePredicates.any()).withNoParameterConstraint()
     );
   }
 

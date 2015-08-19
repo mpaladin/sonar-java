@@ -19,13 +19,14 @@
  */
 package org.sonar.java.checks;
 
+import com.google.common.base.Predicates;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.NamePredicates;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
 import org.sonar.java.checks.methods.MethodMatcher;
-import org.sonar.java.checks.methods.NameCriteria;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.semantic.Symbol;
@@ -56,31 +57,31 @@ public class AssertionsInTestsCheck extends BaseTreeVisitor implements JavaFileS
   private static final MethodMatcher ASSERTJ_ASSERT_ALL = MethodMatcher.create()
     .typeDefinition("org.assertj.core.api.SoftAssertions").name("assertAll");
   private static final MethodMatcher ASSERT_THAT = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.anyType()).name("assertThat").addParameter(TypeCriteria.anyType());
+    .typeDefinition(TypePredicates.anyType()).name("assertThat").addParameter(TypePredicates.anyType());
   private static final MethodMatcher FEST_AS_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.anyType()).name("as").withNoParameterConstraint();
+    .typeDefinition(TypePredicates.anyType()).name("as").withNoParameterConstraint();
   private static final MethodMatcher FEST_DESCRIBED_AS_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.anyType()).name("describedAs").withNoParameterConstraint();
+    .typeDefinition(TypePredicates.anyType()).name("describedAs").withNoParameterConstraint();
   private static final MethodMatcher FEST_OVERRIDE_ERROR_METHOD = MethodMatcher.create()
-    .typeDefinition(TypeCriteria.anyType()).name("overridingErrorMessage").withNoParameterConstraint();
+    .typeDefinition(TypePredicates.anyType()).name("overridingErrorMessage").withNoParameterConstraint();
   private static final MethodInvocationMatcherCollection ASSERTION_INVOCATION_MATCHERS = MethodInvocationMatcherCollection.create(
-    MethodMatcher.create().typeDefinition("org.junit.Assert").name(NameCriteria.startsWith("assert")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.junit.Assert").name(NamePredicates.startsWith("assert")).withNoParameterConstraint(),
     MethodMatcher.create().typeDefinition("org.junit.Assert").name("fail").withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.junit.rules.ExpectedException").name(NameCriteria.startsWith("expect")).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NameCriteria.startsWith("assert")).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.junit.rules.ExpectedException").name(NamePredicates.startsWith("expect")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NamePredicates.startsWith("assert")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("junit.framework.Assert").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
     // fest 1.x
-    MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.fest.assertions.GenericAssert")).name(NameCriteria.any()).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.fest.assertions.Fail").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.fest.assertions.GenericAssert")).name(NamePredicates.any()).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.fest.assertions.Fail").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
     // fest 2.x
-    MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.fest.assertions.api.AbstractAssert")).name(NameCriteria.any()).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.fest.assertions.api.Fail").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.fest.assertions.api.AbstractAssert")).name(NamePredicates.any()).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.fest.assertions.api.Fail").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
     // assertJ
-    MethodMatcher.create().typeDefinition(TypeCriteria.subtypeOf("org.assertj.core.api.AbstractAssert")).name(NameCriteria.any()).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.assertj.core.api.Fail").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.assertj.core.api.Fail").name(NameCriteria.is("shouldHaveThrown")).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.assertj.core.api.Assertions").name(NameCriteria.startsWith("fail")).withNoParameterConstraint(),
-    MethodMatcher.create().typeDefinition("org.assertj.core.api.Assertions").name(NameCriteria.is("shouldHaveThrown")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition(TypePredicates.isSubtypeOf("org.assertj.core.api.AbstractAssert")).name(NamePredicates.any()).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.assertj.core.api.Fail").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.assertj.core.api.Fail").name(Predicates.equalTo("shouldHaveThrown")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.assertj.core.api.Assertions").name(NamePredicates.startsWith("fail")).withNoParameterConstraint(),
+    MethodMatcher.create().typeDefinition("org.assertj.core.api.Assertions").name(Predicates.equalTo("shouldHaveThrown")).withNoParameterConstraint(),
     // Mockito
     MethodMatcher.create().typeDefinition("org.mockito.Mockito").name("verifyNoMoreInteractions").withNoParameterConstraint()
   );

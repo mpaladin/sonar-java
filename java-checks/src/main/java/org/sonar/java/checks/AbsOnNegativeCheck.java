@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
+import org.sonar.java.checks.helpers.TypePredicates;
 import org.sonar.java.checks.methods.MethodMatcher;
 import org.sonar.java.checks.methods.MethodInvocationMatcherCollection;
-import org.sonar.java.checks.methods.TypeCriteria;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Type;
@@ -69,15 +69,15 @@ public class AbsOnNegativeCheck extends SubscriptionBaseVisitor implements JavaF
     MethodMatcher.create()
       .name("hashCode"),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.util.Random"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.util.Random"))
       .name("nextInt"),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.util.Random"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.util.Random"))
       .name("nextLong"),
     MethodMatcher.create()
-      .typeDefinition(TypeCriteria.subtypeOf("java.lang.Comparable"))
+      .typeDefinition(TypePredicates.isSubtypeOf("java.lang.Comparable"))
       .name("compareTo")
-      .addParameter(TypeCriteria.anyType())
+      .addParameter(TypePredicates.anyType())
     );
 
   @Override
