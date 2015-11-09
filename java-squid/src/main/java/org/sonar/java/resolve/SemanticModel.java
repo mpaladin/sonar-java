@@ -51,9 +51,21 @@ public class SemanticModel {
   private BytecodeCompleter bytecodeCompleter;
 
   public static SemanticModel createFor(CompilationUnitTree tree, List<File> projectClasspath) {
+    return createFor(tree, projectClasspath, new BytecodeCache());
+  }
+
+  public static SemanticModel createFor(CompilationUnitTree tree, List<File> projectClasspath, BytecodeCache bytecodeCache) {
     ParametrizedTypeCache parametrizedTypeCache = new ParametrizedTypeCache();
-    BytecodeCompleter bytecodeCompleter = new BytecodeCompleter(projectClasspath, parametrizedTypeCache);
-    Symbols symbols = new Symbols(bytecodeCompleter);
+    BytecodeCompleter bytecodeCompleter = new BytecodeCompleter(projectClasspath, parametrizedTypeCache, bytecodeCache);
+    Symbols symbols;
+    if (bytecodeCache.symbols == null) {
+      symbols = new Symbols(bytecodeCompleter);
+      bytecodeCache.symbols = symbols;
+    } else {
+      symbols = bytecodeCache.symbols;
+    }
+    symbols.setBytecodeCompleter(bytecodeCompleter);
+    bytecodeCompleter.init(symbols);
     SemanticModel semanticModel = new SemanticModel();
     semanticModel.bytecodeCompleter = bytecodeCompleter;
     try {

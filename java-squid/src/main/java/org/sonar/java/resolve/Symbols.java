@@ -153,7 +153,8 @@ public class Symbols {
     // predefined types for java lang
     JavaSymbol.PackageJavaSymbol javalang = bytecodeCompleter.enterPackage("java.lang");
     // define a star import scope to let resolve types to java.lang when needed.
-    javalang.members = new Scope.StarImportScope(javalang, bytecodeCompleter);
+    javalangMembers = new Scope.StarImportScope(javalang, bytecodeCompleter);
+    javalang.members = javalangMembers;
     javalang.members.enter(javalang);
 
     objectType = bytecodeCompleter.loadClass("java.lang.Object").type;
@@ -190,6 +191,12 @@ public class Symbols {
     // TODO arrayClass implements clone() method
 
     enterOperators();
+  }
+
+  private Scope.StarImportScope javalangMembers;
+
+  void setBytecodeCompleter(BytecodeCompleter bytecodeCompleter) {
+    javalangMembers.bytecodeCompleter = bytecodeCompleter;
   }
 
   /**

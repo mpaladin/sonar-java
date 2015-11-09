@@ -66,7 +66,7 @@ public class Scope {
 
   public static class StarImportScope extends Scope {
 
-    private final BytecodeCompleter bytecodeCompleter;
+    public BytecodeCompleter bytecodeCompleter;
 
     public StarImportScope(JavaSymbol owner, BytecodeCompleter bytecodeCompleter) {
       super(owner);

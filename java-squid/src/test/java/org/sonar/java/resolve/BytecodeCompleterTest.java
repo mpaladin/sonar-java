@@ -20,7 +20,7 @@
 package org.sonar.java.resolve;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sonar.java.resolve.targets.Annotations;
 import org.sonar.java.resolve.targets.AnonymousClass;
@@ -41,18 +41,19 @@ import static org.fest.assertions.Fail.fail;
 
 public class BytecodeCompleterTest {
 
+  private static final BytecodeCache bytecodeCache = new BytecodeCache();
   //used to load classes in same package
   public BytecodeCompleterPackageVisibility bytecodeCompleterPackageVisibility = new BytecodeCompleterPackageVisibility();
-  private BytecodeCompleter bytecodeCompleter;
+  private static BytecodeCompleter bytecodeCompleter;
 
   private void accessPackageVisibility() {
     bytecodeCompleterPackageVisibility.add(1, 2);
   }
 
-  @Before
-  public void setUp() throws Exception {
-    bytecodeCompleter = new BytecodeCompleter(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")), new ParametrizedTypeCache());
-    new Symbols(bytecodeCompleter);
+  @BeforeClass
+  public static void setUp() throws Exception {
+    bytecodeCompleter = new BytecodeCompleter(Lists.newArrayList(new File("target/test-classes"), new File("target/classes")), new ParametrizedTypeCache(), bytecodeCache);
+    bytecodeCache.symbols = new Symbols(bytecodeCompleter);
 
   }
 
@@ -225,7 +226,6 @@ public class BytecodeCompleterTest {
     }
     fail("value is not array nor variableSymbol");
   }
-
 
   @Test
   public void type_parameters_should_be_read_from_bytecode() {

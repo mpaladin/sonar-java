@@ -29,6 +29,7 @@ import org.sonar.java.JavaVersionAwareVisitor;
 import org.sonar.java.SonarComponents;
 import org.sonar.java.ast.visitors.SonarSymbolTableVisitor;
 import org.sonar.java.ast.visitors.VisitorContext;
+import org.sonar.java.resolve.BytecodeCache;
 import org.sonar.java.resolve.SemanticModel;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
@@ -56,6 +57,7 @@ public class InternalVisitorsBridge {
   private VisitorContext context;
   @Nullable
   private Integer javaVersion;
+  private final BytecodeCache bytecodeCache = new BytecodeCache();
 
   public InternalVisitorsBridge(Iterable visitors, List<File> projectClasspath, @Nullable SonarComponents sonarComponents) {
     ImmutableList.Builder<JavaFileScanner> scannersBuilder = ImmutableList.builder();
@@ -96,7 +98,7 @@ public class InternalVisitorsBridge {
       tree = (CompilationUnitTree) parsedTree;
       if (isNotJavaLangOrSerializable(PackageUtils.packageName(tree.packageDeclaration(), "/"))) {
         try {
-          semanticModel = SemanticModel.createFor(tree, getProjectClasspath());
+          semanticModel = SemanticModel.createFor(tree, getProjectClasspath(), bytecodeCache);
         } catch (Exception e) {
           LOG.error("Unable to create symbol table for : " + getContext().getFile().getAbsolutePath(), e);
           return;
